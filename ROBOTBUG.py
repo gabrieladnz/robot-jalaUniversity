@@ -44,8 +44,6 @@ class Robot:
                  defense_level=20, energy_consumption=15),
         ]
 
-
-
     def print_status(self):
         print(self.color_code)
         str_robot = robot_art2.format(**self.get_part_status())
@@ -121,8 +119,8 @@ robot_art = r"""
 
  """
 
-robot_art2 = r'''
-                      /~@@~\,
+robot_art2 = r"""
+                       /~@@~\,
      _______ . _\_\___/\ __ /\___|_|_ . _______
     / ____  |=|      \  <_+>  /      |=|  ____ \
     ~|    |\|=|======\\______//======|=|/|    |~
@@ -141,7 +139,9 @@ robot_art2 = r'''
                   |     |  |     |
                   |/~~~\|  |/~~~\|
                   /|___|\  /|___|\
-                 <_______><_______> '''
+                 <_______><_______> 
+                 
+"""
 
 
 colors = {
@@ -154,6 +154,7 @@ colors = {
     "White": '\x1b[97m',
     "Yellow": '\x1b[93m',
 }
+
 
 def build_robot():
     robot_name = input("Robot name: ")
@@ -173,11 +174,12 @@ def choose_color():
     color_code = available_colors[chosen_color]
     return color_code
 
+
 def get_part_status(self):
     part_status = {}
     for part in self.parts:
-            status_dict = part.get_status_dict()
-            part_status.update(status_dict)
+        status_dict = part.get_status_dict()
+        part_status.update(status_dict)
     return part_status
 
 
@@ -198,6 +200,8 @@ def choose_color():
     chosen_color = input("Choose a color: ")
     color_code = available_colors[chosen_color]
     return color_code
+
+
 def play():
     playing = True
     print("Welcome to the game!")
@@ -206,8 +210,8 @@ def play():
     print("Datas for player 2:")
     robot_two = build_robot()
 
-    #current_robot = robot_one
-    #enemy_robot = robot_two
+    current_robot = robot_one
+    enemy_robot = robot_two
     rount = 0
 
     while playing:
@@ -235,5 +239,3 @@ def play():
 
 
 play()
-
-
