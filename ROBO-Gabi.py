@@ -106,8 +106,6 @@ cores = {
 }
 
 # função que permite ao usuário escolher nome e cor do robô
-
-
 def criar_robo():
     robot_nome = input("\n > Nome do robô: ")
     codigo_cor = definir_cor()
@@ -142,8 +140,6 @@ def selecionarPersonagem():
         return selecionarPersonagem()
 
 # função que inicia o jogo
-
-
 def play():
     playing = True
     print("==========================================================")
