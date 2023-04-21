@@ -7,192 +7,269 @@ class Part():
         self.energiaConsumida = energiaConsumida
 
     # função que contém e retorna um dicionário com os dados do robô
-    def get_status_dict(self):
-        formatted_name = self.nome.replace(" ", "_").lower()
+    def get_dicionario(self):
+        # formata a string, substituindo os espaços em branco e convertendo pra letras minúsculas
+        formatar_string = self.nome.replace(" ", "_").lower()
         return {
-            "{}_name".format(formatted_name): self.nome.upper(),
-            "{}_status".format(formatted_name): self.is_available(),
-            "{}_attack".format(formatted_name): self.nivelAtaque,
-            "{}_defense".format(formatted_name): self.nivelDefesa,
-            "{}_energy_consump".format(formatted_name): self.energiaConsumida,
+            "{}_nome".format(formatar_string): self.nome.upper(),
+            "{}_status".format(formatar_string): self.status_defesa(),
+            "{}_ataque".format(formatar_string): self.nivelAtaque,
+            "{}_defesa".format(formatar_string): self.nivelDefesa,
+            "{}_energia_consumida".format(formatar_string): self.energiaConsumida,
         }
 
     # função pra reduzir a defesa a cada ataque
-    def reduce_edefense(self, nivelAtaque):
+    def reduzir_defesa(self, nivelAtaque):
         self.nivelDefesa = self.nivelDefesa - nivelAtaque
         if self.nivelDefesa <= 0:
             self.nivelDefesa = 0
 
-    def is_available(self):
+    # função para verificar se o nível de defesa
+    def status_defesa(self):
         return self.nivelDefesa <= 0
 
 
 class Robot:
-    def __init__(self, name, color_code):
+    # a classe Robot define as características básicas do robô, interagindo com a classe Part que contém as partes do robo
+    def __init__(self, nome, codigo_cor):
         self.nome = nome
-        self.color_code = color_code
-        self.energy = 100
+        self.codigo_cor = codigo_cor
+        self.energia = 100
+        # chama a classe Part e seus objetos, representando as partes do robô
         self.parts = [
-            Part("Head", nivelAtaque=5, nivelDefesa=10, energiaConsumida=5),
-            Part("Weapon", nivelAtaque=15,
+            Part("Cabeça", nivelAtaque=5, nivelDefesa=10, energiaConsumida=5),
+            Part("Arma", nivelAtaque=15,
                  nivelDefesa=0, energiaConsumida=10),
-            Part("Left Arm", nivelAtaque=3,
+            Part("Braço esquerdo", nivelAtaque=3,
                  nivelDefesa=20, energiaConsumida=10),
-            Part("Right Arm", nivelAtaque=6,
+            Part("Braço direito", nivelAtaque=6,
                  nivelDefesa=20, energiaConsumida=10),
-            Part("Left Leg", nivelAtaque=4,
+            Part("Perna esquerda", nivelAtaque=4,
                  nivelDefesa=20, energiaConsumida=15),
-            Part("Right Leg", nivelAtaque=8,
+            Part("Perna direita", nivelAtaque=8,
                  nivelDefesa=20, energiaConsumida=15),
         ]
 
-    def print_status(self):
-        print(self.color_code)
-        str_robot = robot_art.format(**self.get_part_status())
-        self.greet()
-        self.print_energy()
+    # imprime o status atual do robô
+    def print_robo(self):
+        print(self.codigo_cor)
+        # representação visual do robô
+        str_robot = roboR2.format(**self.status_partes_robo())
+        self.saudacao()
+        self.print_energia()
         print(str_robot)
-        print(colors["White"])
+        print(cores["Branco"])
 
-    def greet(self):
-        print("Hello, my name is", self.nome)
+    def saudacao(self):
+        print("Olá! Meu nome é ", self.nome)
 
-    def print_energy(self):
-        print("We have", self.energy, " percent energy left")
+    # porcentagem atual de energia
+    def print_energia(self):
+        print("Nós temos", self.energia, "% de energia sobrando")
 
-    def get_part_status(self):
+    def status_partes_robo(self):
+        # dicionário vazio
         part_status = {}
+        # faz um loop adicionando as novas partes do robô ao dicionário
         for part in self.parts:
-            status_dict = part.get_status_dict()
+            status_dict = part.get_dicionario()
             part_status.update(status_dict)
         return part_status
 
-    def is_there_available_part(self):
+    # verifica se o robô ainda tem partes com defesa disponível
+    def parte_robo_disponivel(self):
         for part in self.parts:
-            if part.is_available():
+            if part.status_defesa():
                 return True
         return False
 
-    def is_on(self):
-        return self.energy >= 0
+    # verifica se o robô está vivo ou morto com base na sua energia
+    def robo_ligado(self):
+        return self.energia >= 0
 
-    def attack(self, enemy_robot, part_to_use, part_to_attack):
-        enemy_robot.parts[part_to_attack].reduce_edefense(
-            self.parts[part_to_use].nivelAtaque)
-        self.energy -= self.parts[part_to_use].energiaConsumida
+    # função de ataque de um robô contra outro
+    def ataque(self, robo_inimigo, parte_atacante, parte_atacada):
+        robo_inimigo.parts[parte_atacada].reduzir_defesa(
+            self.parts[parte_atacante].nivelAtaque)
+        self.energia -= self.parts[parte_atacante].energiaConsumida
 
 
-robot_art = r"""
-       0: {head_name}
-       Is available: {head_status}
-       Attack: {head_attack}                              
-       Defense: {head_defense}
-       Energy consumption: {head_energy_consump}
-               ^
-               |                  |1: {weapon_name}
-               |                  |Is available: {weapon_status}
-      ____     |    ____          |Attack: {weapon_attack}
-     |oooo|  ____  |oooo| ------> |Defense: {weapon_defense}
-     |oooo| '    ' |oooo|         |Energy consumption: {weapon_energy_consump}
-     |oooo|/\_||_/\|oooo|          
-     `----' / __ \  `----'           |2: {left_arm_name}
-    '/  |#|/\/__\/\|#|  \'           |Is available: {left_arm_status}
-    /  \|#|| |/\| ||#|/  \           |Attack: {left_arm_attack}
-   / \_/|_|| |/\| ||_|\_/ \          |Defense: {left_arm_defense}
-  |_\/    O\=----=/O    \/_|         |Energy consumption: {left_arm_energy_consump}
-  <_>      |=\__/=|      <_> ------> |
-  <_>      |------|      <_>         |3: {right_arm_name}
-  | |   ___|======|___   | |         |Is available: {right_arm_status}
- // \\ / |O|======|O| \  //\\        |Attack: {right_arm_attack}
- |  |  | |O+------+O| |  |  |        |Defense: {right_arm_defense}
- |\/|  \_+/        \+_/  |\/|        |Energy consumption: {right_arm_energy_consump}
- \__/  _|||        |||_  \__/        
-       | ||        || |          |4: {left_leg_name} 
-      [==|]        [|==]         |Is available: {left_leg_status}
-      [===]        [===]         |Attack: {left_leg_attack}
-       >_<          >_<          |Defense: {left_leg_defense}
-      || ||        || ||         |Energy consumption: {left_leg_energy_consump}
-      || ||        || || ------> |
-      || ||        || ||         |5: {right_leg_name}
-    __|\_/|__    __|\_/|__       |Is available: {right_leg_status}
-   /___n_n___\  /___n_n___\      |Attack: {right_leg_attack}
-                                 |Defense: {right_leg_defense}
-                                 |Energy consumption: {right_leg_energy_consump}
-
- """
-
-colors = {
-    "Black": '\x1b[90m',
-    "Blue": '\x1b[94m',
-    "Cyan": '\x1b[96m',
-    "Green": '\x1b[92m',
+cores = {
+    "Preto": '\x1b[90m',
+    "Azul": '\x1b[94m',
+    "Ciano": '\x1b[96m',
+    "Verde": '\x1b[92m',
     "Magenta": '\x1b[95m',
-    "Red": '\x1b[91m',
-    "White": '\x1b[97m',
-    "Yellow": '\x1b[93m',
+    "Vermelho": '\x1b[91m',
+    "Branco": '\x1b[97m',
+    "Amarelo": '\x1b[93m',
 }
 
-def get_part_status(self):
-    part_status = {}
-    for part in self.parts:
-        status_dict = part.get_status_dict()
-        part_status.update(status_dict)
-    return part_status
+# função que permite ao usuário escolher nome e cor do robô
 
 
-def build_robot():
-    robot_name = input("Robot name: ")
-    color_code = choose_color()
-    robot = Robot(robot_name, color_code)
-    robot.print_status()
+def criar_robo():
+    robot_nome = input("\n > Nome do robô: ")
+    codigo_cor = definir_cor()
+    robot = Robot(robot_nome, codigo_cor)
+    robot.print_robo()
     return robot
 
 
-def choose_color():
-    available_colors = colors
-    print("Available colors:")
-    for key, value in available_colors.items():
+def definir_cor():
+    cores_disponiveis = cores
+    print("\n Cores disponíveis:")
+    for key, value in cores_disponiveis.items():
         print(value, key)
-    print(colors["White"])
-    chosen_color = input("Choose a color: ")
-    color_code = available_colors[chosen_color]
-    return color_code
+    print(cores["Branco"])
+    # .capitalize() permite que a entrada seja minúscula/maiúscula
+    cor_escolhida = input("\n > Escolha uma cor: ").capitalize()
+    codigo_cor = cores_disponiveis[cor_escolhida]
+    return codigo_cor
+
+
+def selecionarPersonagem():
+    personagemSelecionado = int(
+        input("\n 1 - roboR2 \n 2 - roboUltron \n 3 - snakePiton \n =>"))
+    if (personagemSelecionado == 1):
+        print(roboR2)
+    elif (personagemSelecionado == 2):
+        print(roboUltron)
+    elif (personagemSelecionado == 3):
+        print(snakePiton)
+    else:
+        print("\n Condição inválida! Insira uma das opções disponíveis.")
+        return selecionarPersonagem()
+
+# função que inicia o jogo
 
 
 def play():
     playing = True
-    print("Welcome to the game!")
-    print("Datas for player 1:")
-    robot_one = build_robot()
-    print("Datas for player 2:")
-    robot_two = build_robot()
-
-    current_robot = robot_one
-    enemy_robot = robot_two
-    rount = 0
+    print("==========================================================")
+    print("Bem-vindo(a) ao jogo! Uma intensa batalha espera por você! \n")
+    print("> Jogador 1, escolha com quem deseja batalhar:")
+    selecionarPersonagem()
+    robo_um = criar_robo()
+    print("> Jogador 2, escolha com quem deseja batalhar:")
+    selecionarPersonagem()
+    robo_dois = criar_robo()
+    robo_atual = robo_um
+    robo_inimigo = robo_dois
+    rodada = 0
 
     while playing:
-        if rount % 2 == 0:
-            current_robot = robot_one
-            enemy_robot = robot_two
+        if rodada % 2 == 0:
+            robo_atual = robo_um
+            robo_inimigo = robo_dois
         else:
-            current_robot = robot_two
-            enemy_robot = robot_one
-        current_robot.print_status()
-        print("What part should I use to attack?:")
-        part_to_use = input("Choose a number part: ")
-        part_to_use = int(part_to_use)
+            robo_atual = robo_dois
+            robo_inimigo = robo_um
+        robo_atual.print_robo()
+        print("Qual parte devo usar para atacar?")
+        parte_atacante = input("Escolha um número:")
+        parte_atacante = int(parte_atacante)
 
-        enemy_robot.print_status()
-        print("Which part of the enemy should we attack?")
-        part_to_attack = input("Choose a enemy number part to attack: ")
-        part_to_attack = int(part_to_attack)
+        robo_inimigo.print_robo()
+        print("Qual parte do inimigo devemos atacar?")
+        parte_atacada = input("Escolha um número para atacar o inimigo: ")
+        parte_atacada = int(parte_atacada)
 
-        current_robot.attack(enemy_robot, part_to_use, part_to_attack)
-        rount += 1
-        if not enemy_robot.is_on() or enemy_robot.is_there_available_part() == False:
+        robo_atual.ataque(robo_inimigo, parte_atacante, parte_atacada)
+        rodada += 1
+        if not robo_inimigo.robo_ligado() or robo_inimigo.parte_robo_disponivel() == False:
             playing = False
-            print("Congratulations, you won")
+            print("Parabéns, você ganhou!")
 
+
+# ==================================== Opções de batalha ============================================
+roboR2 = r"""
+	
+      ___       ___
+     [___] /~\ [___]
+     |ooo|.\_/.|ooo|
+     |888||   ||888|
+    /|888||   ||888|\
+  /_,|###||___||###|._\
+ /~\  ~~~ /[_]\ ~~~  /~\
+(O_O) /~~[_____]~~\ (O_O)
+     (  |       |  )
+    [~` ]       [ '~]
+    |~~|         |~~|
+    |  |         |  |
+   _<\/>_       _<\/>_
+  /_====_\     /_====_\
+ """
+
+roboUltron = r"""
+                        /[-])//  ___
+                    __ --\ `_/~--|  / \
+                  /_-/~~--~~ /~~~\\_\ /\
+                  |  |___|===|_-- | \ \ \
+_/~~~~~~~~|~~\,   ---|---\___/----|  \/\-\
+~\________|__/   / // \__ |  ||  / | |   | |
+         ,~-|~~~~~\--, | \|--|/~|||  |   | |
+         [3-|____---~~ _--'==;/ _,   |   |_|
+                     /   /\__|_/  \  \__/--/
+                    /---/_\  -___/ |  /,--|
+                    /  /\/~--|   | |  \///
+                   /  / |-__ \    |/
+                  |--/ /      |-- | \
+                 \^~~\\/\      \   \/- _
+                  \    |  \     |~~\~~| \
+                   \    \  \     \   \  | \
+                     \    \ |     \   \    \
+                      |~~|\/\|     \   \   |
+                     |   |/         \_--_- |\
+                     |  /            /   |/\/
+                      ~~             /  /
+                                    |__/
+ """
+
+snakePiton = r"""
+ ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⠶⠟⠛⠛⠻⠶⠶⣶⣤⣤⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⡾⠋⣡⣴⣾⣿⣿⣿⣶⣶⣦⣤⣉⣉⠛⠛⠷⢶⣤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⠟⢉⣤⣾⣿⣿⣿⡿⠋⠁⠀⠀⠈⠉⠙⠛⠿⢷⣶⣤⣄⣉⠙⠛⠷⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⠟⢁⣴⣿⣿⣿⣿⠟⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⡟⠿⢶⣤⣄⠉⠻⣶⣄⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⠟⢁⣴⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⣀⣤⣤⣄⣀⠀⠀⠀⠀⠀⠀⠙⠓⠦⢄⣈⣻⣷⣄⠈⠻⣷⡀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⠟⢁⣴⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⣠⣾⣿⣛⠛⠛⠻⣿⣇⠀⠀⠀⠀⣤⣄⣀⠀⠈⠉⠛⠻⠃⠀⠈⠻⣦⡀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⠟⢁⣴⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⢠⣾⡿⠋⠉⠛⠻⠶⣶⣿⣿⠀⠀⠀⠀⣿⣿⣿⣿⣶⣤⣀⠀⠀⠀⠀⠀⣸⡇⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡿⠁⣰⣿⣿⣿⣿⠋⠀⠀⠀⠀⠀⢀⣴⡿⠿⠿⢷⣶⣤⣀⣀⠀⢹⣿⡄⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⣠⡾⠟⠁⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⡟⠀⣼⣿⣿⣿⠟⠁⠀⠀⠀⠀⢀⣴⣿⣿⣀⡀⠀⠀⠀⠉⠙⠛⠻⢿⣿⣇⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣇⣴⡟⠁⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡿⠀⣸⣿⣿⣿⠋⠀⠀⠀⠀⠀⢠⣾⡟⠉⠉⠛⠛⠿⢷⣶⣤⣄⣀⠀⠀⢸⣿⡄⠀⠀⠈⣿⣿⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡇⠀⣿⣿⣿⡇⠀⠀⠀⠀⠀⢠⣿⣯⣀⣀⡀⠀⠀⠀⠀⠀⠈⠉⠙⠛⢿⣿⡿⢁⣀⠀⠀⠹⣿⣿⠟⠋⣹⡿⠁⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣧⠀⢹⣿⣿⣇⠀⠀⠀⠀⠀⣿⡟⠉⠛⠛⠻⠿⠷⣶⣦⣤⣄⣀⣀⢀⣾⡟⣰⠟⠉⠳⣆⠀⠀⠀⣀⣾⠏⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡄⠀⢻⣿⣿⡄⠀⠀⠀⠀⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠛⣿⡿⢰⡏⠀⠀⠀⠈⠛⠶⠾⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⡄⠀⢻⣿⣿⡀⠀⠀⠀⢹⣿⣦⣤⣤⣤⣤⣀⣀⣀⣀⣀⡀⢀⣿⡇⣼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⣄⠀⢻⣿⣷⡀⠀⠀⠀⢿⣿⠉⠉⠉⠉⠙⠛⠛⠛⠛⠛⠻⣿⡇⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣆⠀⢻⣿⣷⡀⠀⠀⠈⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⢿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣆⠀⢻⣿⣿⡄⠀⠀⠘⣿⣦⣤⣤⣤⣤⣤⣤⣤⣤⣴⣿⡇⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣦⠀⢻⣿⣿⡄⠀⠀⠘⣿⣏⠉⠉⠉⠉⠉⠀⠀⠀⢻⣿⠘⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣧⠀⠻⣿⣿⡄⠀⠀⠹⣿⡄⠀⠀⠀⠀⠀⠀⠀⢸⣿⡄⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣧⠀⠹⣿⣿⡄⠀⠀⠹⣿⣄⣤⣤⣤⣤⣤⣶⣾⣿⣧⢸⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣷⡀⠹⣿⣿⡄⠀⠀⢹⣿⡉⠉⠁⠀⠀⠀⠀⢸⣿⡌⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢷⡀⠹⣿⣿⡄⠀⠀⢻⣷⡀⠀⠀⠀⠀⠀⠀⣿⣇⢹⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢷⡄⠹⣿⣿⡄⠀⠀⢿⣷⣤⣤⣴⣶⠶⠿⠿⣿⡌⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⡄⠹⣿⣿⡆⠀⠈⢿⣯⠀⠀⠀⠀⠀⠀⢿⣧⢹⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡄⠹⣿⣿⣄⠀⠘⣿⣧⠀⠀⢀⣀⣀⣼⣿⡄⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣆⠹⣿⣿⡄⠀⠘⣿⣿⠟⠛⠋⠉⠉⢻⣷⠸⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣆⠹⣿⣿⡄⠀⠘⣿⣆⠀⠀⠀⠀⣸⣿⡇⢿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣆⠹⣿⣿⡄⠀⠸⣿⣶⡶⠿⠛⠋⢻⣿⡘⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣆⢹⣿⣿⡀⠀⠹⣿⡄⠀⠀⠀⣀⣿⣧⢹⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡆⢻⣿⣷⡀⠀⢹⣿⣶⠶⠟⠛⠻⣿⡄⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡄⢻⣿⣧⠀⠀⢻⣿⠀⠀⠀⣀⣿⣧⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡴⠒⠛⠛⠛⠒⠦⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣷⠈⢿⣿⣇⠀⠈⢿⣷⡶⠟⠛⠻⣿⡄⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡴⠟⠁⢀⣀⠀⢶⣶⣶⣤⡈⠙⢦⣀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣇⠘⣿⣿⡆⠀⠘⣿⡆⠀⠀⣀⣿⣧⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣠⠾⠋⢀⣠⣾⡿⢿⣷⡄⠻⣿⣿⣿⣷⣄⡉⠳⣄⠀⠀⠀⠀⠀⠀⠀⣿⡀⢻⣿⣿⡀⠀⢻⣿⡾⠟⠋⢹⣿⡈⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣠⠞⠁⢀⣴⣿⠟⠉⠀⠀⠙⣿⣦⡈⠻⣿⣿⣿⣿⣦⡈⠻⣦⡀⠀⠀⠀⠀⢹⡇⠸⣿⣿⣇⠀⠘⣿⣆⣀⣤⣼⣿⡇⠻⢤⣀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⠞⠁⢀⣴⡿⠋⠁⠀⠀⠀⢀⣴⠟⠻⣿⣦⡈⠻⣿⣿⣿⣿⣷⣄⠙⢦⡀⠀⠀⢸⣷⠀⣿⣿⣿⠀⠀⣿⣿⠋⠉⠀⣿⡇⢠⣄⡉⠛⢶⣄⠀⠀⠀⠀⠀
+⠀⠀⠀⢰⠋⠀⠀⠿⣿⣦⣄⡀⠀⢀⣴⡿⠁⠀⠀⢈⣿⢿⣶⣄⡙⠻⢿⣿⣿⣷⣦⡙⢷⣤⣸⣿⠀⣿⣿⣿⡇⠀⣿⣿⣤⣶⢾⣿⡇⢸⣿⣿⣷⣤⡈⠻⢦⡀⠀⠀
+⠀⠀⠀⠘⣧⠀⠀⠀⠈⠙⠻⢿⣷⣿⣏⡀⠀⠀⣠⡿⠃⠀⠉⢻⣿⣷⣦⣬⣙⣛⠻⠿⠶⠈⠻⠏⢠⣿⣿⣿⡇⠀⣿⡟⠉⠀⣸⣿⠃⢸⣿⣿⣿⡿⠟⢀⡀⠹⣦⠀
+⠀⠀⣀⡴⠋⠀⣠⣤⣄⠀⠀⠀⠈⠉⠛⠿⣷⣶⣿⣀⡀⠀⢠⡿⠁⠀⠉⣹⡿⠛⠿⠿⣿⣿⠂⠀⣼⣿⣿⣿⠁⢠⣿⣷⡾⢿⣿⠏⠀⠉⠉⠉⢁⣀⣴⣿⣿⣆⠘⣧
+⣠⠞⠋⠀⠴⣾⣿⣿⣿⣿⣦⣄⡀⠀⠀⠀⠀⠈⠙⠛⠿⢿⣿⣷⣤⣤⣤⣿⣥⣤⣴⣿⠟⠁⢀⣼⣿⣿⣿⠏⢀⣾⡟⢁⣴⣿⠏⢀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⣿
+⠻⠦⣤⣀⡀⠀⠈⠉⠛⠻⠿⢿⣿⣷⣶⣤⣀⠘⠻⠶⣦⣤⣀⣉⠉⠙⠛⠛⠛⠉⠉⠀⣀⣴⣿⣿⣿⡿⠋⣠⣾⣿⣷⡿⠟⠁⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⠟⠃⣰⠏
+⠀⠀⠀⠈⠉⠛⠓⠶⠦⣤⣄⣀⣀⡈⠉⠉⠛⠛⠷⠦⠀⠈⠉⠛⠛⠿⠿⠷⣾⣿⣿⣿⡿⠿⠿⠛⠁⠀⠀⠙⠛⠋⠁⠀⠀⠺⠿⠿⠿⠿⠟⠛⠛⣉⣁⣤⠶⠛⠁⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠛⠛⠛⠲⠶⠶⠶⠤⠤⢤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⠤⠤⠶⠶⠶⠒⠛⠛⠛⠛⠛⠛⠓⠚⠚⠛⠛⠛⠋⠉⠁⠀⠀⠀⠀⠀
+ """
 
 play()
