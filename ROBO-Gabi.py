@@ -17,6 +17,7 @@ class Part():
             "{}_energy_consump".format(formatted_name): self.energiaConsumida,
         }
 
+    # função pra reduzir a defesa a cada ataque
     def reduce_edefense(self, nivelAtaque):
         self.nivelDefesa = self.nivelDefesa - nivelAtaque
         if self.nivelDefesa <= 0:
