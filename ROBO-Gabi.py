@@ -37,16 +37,16 @@ class Robot:
         self.energia = 100
         # chama a classe Part e seus objetos, representando as partes do robô
         self.parts = [
-            Part("Cabeça", nivelAtaque=5, nivelDefesa=10, energiaConsumida=5),
-            Part("Arma", nivelAtaque=15,
+            Part("Cabeça", nivelAtaque=10, nivelDefesa=10, energiaConsumida=5),
+            Part("Arma", nivelAtaque=20,
                  nivelDefesa=0, energiaConsumida=10),
-            Part("Braço esquerdo", nivelAtaque=3,
+            Part("Braço esquerdo", nivelAtaque=10,
                  nivelDefesa=20, energiaConsumida=10),
-            Part("Braço direito", nivelAtaque=6,
+            Part("Braço direito", nivelAtaque=10,
                  nivelDefesa=20, energiaConsumida=10),
-            Part("Perna esquerda", nivelAtaque=4,
+            Part("Perna esquerda", nivelAtaque=8,
                  nivelDefesa=20, energiaConsumida=15),
-            Part("Perna direita", nivelAtaque=8,
+            Part("Perna direita", nivelAtaque=12,
                  nivelDefesa=20, energiaConsumida=15),
         ]
 
@@ -54,7 +54,7 @@ class Robot:
     def print_robo(self):
         print(self.codigo_cor)
         # representação visual do robô
-        str_robot = roboR2.format(**self.status_partes_robo())
+        str_robot = selecaoExata(personagemSelecionado=3).format(**self.status_partes_robo())
         self.saudacao()
         self.print_energia()
         print(str_robot)
@@ -122,23 +122,33 @@ def definir_cor():
     print(cores["Branco"])
     # .capitalize() permite que a entrada seja minúscula/maiúscula
     cor_escolhida = input("\n > Escolha uma cor: ").capitalize()
-    codigo_cor = cores_disponiveis[cor_escolhida]
-    return codigo_cor
+    # solução para cor inserida fora das opções e quebra de código.
+    if cor_escolhida not in cores_disponiveis:
+        print("\n Condição inválida! Insira uma cor que esteja disponível. \n")
+        return definir_cor()
+    else:
+        return cores_disponiveis[cor_escolhida]
 
 
 def selecionarPersonagem():
     personagemSelecionado = int(
         input("\n 1 - roboR2 \n 2 - roboUltron \n 3 - snakePiton \n =>"))
+    personagemSelecionado = selecaoExata(personagemSelecionado)
+    
+def selecaoExata(personagemSelecionado):
     if (personagemSelecionado == 1):
         print(roboR2)
+        return "roboR2"
     elif (personagemSelecionado == 2):
         print(roboUltron)
+        return "roboUltron"
     elif (personagemSelecionado == 3):
         print(snakePiton)
+        return "snakePiton"
     else:
         print("\n Condição inválida! Insira uma das opções disponíveis.")
         return selecionarPersonagem()
-
+    
 # função que inicia o jogo
 def play():
     playing = True
