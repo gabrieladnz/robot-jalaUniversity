@@ -219,12 +219,12 @@ robot_r2 = r"""
 
 robot_snakepiton = r"""
 
-                            ___________________________________________
-                            |0: Cabelça                               |
-                            |Is available: {head_status}              |
-                            |Attack: {head_attack}                    |          
-                            |Defense: {head_defense}                  |
-                            |Energy consumption: {head_energy_consump}|
+                            
+                            |0: Cabelça                               
+                            |Is available: {head_status}              
+                            |Attack: {head_attack}                              
+                            |Defense: {head_defense}                  
+                            |Energy consumption: {head_energy_consump}
                             ¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
                                            ^
                                            |
@@ -322,7 +322,7 @@ def choose_robot():
             selected_robot = robots[robot_chosen]
             break
         else:
-            print("Invalid robot, please choose again.")
+            print("Robô inválido, escolha novamente.")
     return selected_robot
 
 def choose_color():
@@ -337,7 +337,7 @@ def choose_color():
             color_code = available_colors[chosen_color]
             break
         else:
-            print("Invalid color, please choose again.")
+            print("Cor inválida, escolha novamente.")
     return color_code
 def play():
     playing = True

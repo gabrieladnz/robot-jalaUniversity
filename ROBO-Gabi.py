@@ -54,7 +54,10 @@ class Robot:
     def print_robo(self):
         print(self.codigo_cor)
         # representação visual do robô
-        str_robot = selecaoExata(personagemSelecionado=3).format(**self.status_partes_robo())
+        # personagemSelecionado = int(
+        # input("\n 1 - roboR2 \n 2 - roboUltron \n 3 - snakePiton \n =>"))
+        str_robot = selecaoExata(self.personagemSelecionado).format(
+            **self.status_partes_robo())
         self.saudacao()
         self.print_energia()
         print(str_robot)
@@ -134,21 +137,23 @@ def selecionarPersonagem():
     personagemSelecionado = int(
         input("\n 1 - roboR2 \n 2 - roboUltron \n 3 - snakePiton \n =>"))
     personagemSelecionado = selecaoExata(personagemSelecionado)
-    
-def selecaoExata(personagemSelecionado):
+    return personagemSelecionado
+
+
+def selecaoExata(personagemSelecionado: int):
     if (personagemSelecionado == 1):
         print(roboR2)
-        return "roboR2"
+        return 1
     elif (personagemSelecionado == 2):
         print(roboUltron)
-        return "roboUltron"
+        return 2
     elif (personagemSelecionado == 3):
         print(snakePiton)
-        return "snakePiton"
+        return 3
     else:
         print("\n Condição inválida! Insira uma das opções disponíveis.")
         return selecionarPersonagem()
-    
+
 # função que inicia o jogo
 def play():
     playing = True
