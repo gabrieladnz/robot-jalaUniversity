@@ -65,6 +65,7 @@ class Robot:
         print(colors["preto"])
 
     def greet(self):
+        print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=')
         print("Olá! Meu nome é", self.name)
 
     def print_energy(self):
