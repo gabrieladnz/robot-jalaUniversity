@@ -133,15 +133,21 @@ def definir_cor():
     
 def selecionarPersonagem():
     print("\nSelecione um personagem:")
+    # Faz um loop pelos itens do dicionário personagens e exibe na tela cada opção disponível para o usuário selecionar
     for opcao, personagem in personagens.items():
         print(f"{opcao} - {personagem}")
 
+    # Inicia um loop infinito, para que o usuário possa tentar selecionar um personagem até escolher uma opção válida
     while True:
+        # tentativa de converter a entrada do usuário pra um número inteiro
         try:
             opcaoSelecionada = int(input("=> "))
+            # Se a opção selecionada pelo usuário não estiver disponível no dicionário personagens, levanta um erro do tipo ValueError
             if opcaoSelecionada not in personagens.keys():
                 raise ValueError
+            # se a opção selecionada pelo usuário estiver disponível, retorna o número correspondente
             return opcaoSelecionada
+        # se o usuário inserir uma opção inválida, exibe a mensagem de erro até o usuário inserir uma opção válida
         except ValueError:
             print("\nOpção inválida! Insira uma das opções disponíveis.")
 
