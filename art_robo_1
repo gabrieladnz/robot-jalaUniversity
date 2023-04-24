@@ -1,0 +1,40 @@
+1: r"""
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=	
+       0: {cabeça_nome}
+       Is available: {cabeça_status}
+       Attack: {cabeça_ataque}                              
+       Defense: {cabeça_defesa}
+       Energy consumption: {cabeça_energia_consumida}
+            ^
+            |                  |1: {arma_nome}
+            |                  |Is available: {arma_status}
+      ___       ___            |Attack: {arma_ataque}
+     [___] /~\ [___]           |Defense: {arma_defesa}
+     |ooo|.\_/.|ooo|           |Energy consumption: {arma_energia_consumida}
+     |888||   ||888|
+  / /|888||   ||888|\ \
+ /_./|###||___||###| \._\ ---> |2: {braço_esquerdo_nome}
+ /~\  ~~~ /[_]\ ~~~   /~\      |Is available: {braço_esquerdo_status}
+(O_O) /~~[_____]~~\  (O_O)     |Attack: {braço_esquerdo_ataque} 
+     (  |       |  )            |Defense: {braço_esquerdo_defesa}
+    [~` ]       [ '~]           |Energy consumption: {braço_esquerdo_energia_consumida}
+    |~~|         |~~|           |
+    |  |         |  |           |3: {braço_direito_nome}
+   _<\/>_       _<\/>_          |Is available: {braço_direito_status}
+  /_====_\     /_====_\         |Attack: {braço_direito_ataque}                                
+                                |Defense: {braço_direito_defesa}          
+             ^                   |Energy consumption: {braço_direito_energia_consumida}
+             |
+             |    
+|4: {perna_esquerda_nome} 
+|Is available: {perna_esquerda_status}
+|Attack: {perna_esquerda_ataque}
+|Defense: {perna_esquerda_defesa}
+|Energy consumption: {perna_esquerda_energia_consumida}
+|
+|5: {perna_direita_nome}
+|Is available: {perna_direita_status}
+|Attack: {perna_direita_ataque}
+|Defense: {perna_direita_defesa}
+|Energy consumption: {perna_direita_energia_consumida}
+""",
