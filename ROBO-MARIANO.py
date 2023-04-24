@@ -19,7 +19,7 @@ class Part():
     def reduce_edefense(self, attack_level):
         self.defense_level = self.defense_level - attack_level
         if self.defense_level <= 0:
-            self.defense_level = 0
+            self.defense_level = 0 
 
     def is_available(self):
         return self.defense_level <= 0
@@ -53,13 +53,13 @@ class Robot:
         self.greet()
         self.print_energy()
         print(str_robot)
-        print(colors["white"])
+        print(colors["preto"])
 
     def greet(self):
-        print("Hello, my name is", self.name)
+        print("Olá! Meu nome é", self.name)
 
     def print_energy(self):
-        print("We have", self.energy, " percent energy left")
+        print("Nós temos", self.energy,"% de energia sobrando")
 
     def get_part_status(self):
         part_status = {}
@@ -78,11 +78,24 @@ class Robot:
         return self.energy >= 0
 
     def attack(self, enemy_robot, part_to_use, part_to_attack):
-        enemy_robot.parts[part_to_attack].reduce_edefense(
-            self.parts[part_to_use].attack_level)
-        self.energy -= self.parts[part_to_use].energy_consumption
+        attack_level = self.parts[part_to_use].attack_level
+        defense_level = enemy_robot.parts[part_to_attack].defense_level
 
-robot_art1 = r"""
+        if attack_level > defense_level:
+            damage = attack_level - defense_level
+        else:
+            damage = 0
+
+        enemy_robot.parts[part_to_attack].reduce_edefense(attack_level)
+
+        self.energy -= self.parts[part_to_use].energy_consumption
+        enemy_robot.energy -= damage
+
+        if self.energy < 0:
+            self.energy = 0
+
+robot_origen = r"""
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
        0: {head_name}
        Is available: {head_status}
        Attack: {head_attack}                              
@@ -119,9 +132,11 @@ robot_art1 = r"""
                                  |Defense: {right_leg_defense}
                                  |Energy consumption: {right_leg_energy_consump}
 
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  """
 
-robot_art2 = r'''
+robot_ultron = r'''
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
            0: {head_name}
            Is available: {head_status}
            Attack: {head_attack}                              
@@ -158,22 +173,128 @@ _/~~~~~~~~|~~\,   ---|---\___/----|  \/\-\             |2: {left_arm_name}
                                                           |Defense: {right_leg_defense}
                                                           |Energy consumption: {right_leg_energy_consump}
 
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 '''
+
+
+robot_r2 = r"""
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=	
+       0: {head_name}
+       Is available: {head_status}
+       Attack: {head_attack}                              
+       Defense: {head_defense}
+       Energy consumption: {head_energy_consump}
+            ^
+            |                  |1: {weapon_name}
+            |                  |Is available: {weapon_status}
+      ___       ___            |Attack: {weapon_attack}
+     [___] /~\ [___]           |Defense: {weapon_defense}
+     |ooo|.\_/.|ooo|           |Energy consumption: {left_arm_energy_consump}
+     |888||   ||888|
+  / /|888||   ||888|\ \
+ /_./|###||___||###| \._\ ---> |2: {left_arm_name}
+ /~\  ~~~ /[_]\ ~~~   /~\      |Is available: {left_arm_status}
+(O_O) /~~[_____]~~\  (O_O)     |Attack: {left_arm_attack} 
+     (  |       |  )            |Defense: {left_arm_defense}
+    [~` ]       [ '~]           |Energy consumption: {left_arm_energy_consump}
+    |~~|         |~~|           |
+    |  |         |  |           |3: {right_arm_name}
+   _<\/>_       _<\/>_          |Is available: {right_arm_status}
+  /_====_\     /_====_\         |Attack: {right_arm_attack}                                
+                                |Defense: {right_arm_defense}          
+             ^                   |Energy consumption: {right_arm_energy_consump}
+             |
+             |    
+|4: {left_leg_name} 
+|Is available: {left_leg_status}
+|Attack: {left_leg_attack}
+|Defense: {left_leg_defense}
+|Energy consumption: {left_leg_energy_consump}
+|
+|5: {right_leg_name}
+|Is available: {right_leg_status}
+|Attack: {right_leg_attack}
+|Defense: {right_leg_defense}
+|Energy consumption: {right_leg_energy_consump}
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+ """
+
+robot_snakepiton = r"""
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=                            
+                            0: Cabelça                               
+                            Is available: {head_status}              
+                            Attack: {head_attack}                              
+                            Defense: {head_defense}                  
+                            Energy consumption: {head_energy_consump}
+                                           ^
+                                           |
+                                           |
+
+ ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⠶⠟⠛⠛⠻⠶⠶⣶⣤⣤⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⡾⠋⣡⣴⣾⣿⣿⣿⣶⣶⣦⣤⣉⣉⠛⠛⠷⢶⣤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⠟⢉⣤⣾⣿⣿⣿⡿⠋⠁⠀⠀⠈⠉⠙⠛⠿⢷⣶⣤⣄⣉⠙⠛⠷⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⠟⢁⣴⣿⣿⣿⣿⠟⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⡟⠿⢶⣤⣄⠉⠻⣶⣄⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⠟⢁⣴⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⣀⣤⣤⣄⣀⠀⠀⠀⠀⠀⠀⠙⠓⠦⢄⣈⣻⣷⣄⠈⠻⣷⡀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣼⠟⢁⣴⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⣠⣾⣿⣛⠛⠛⠻⣿⣇⠀⠀⠀⠀⣤⣄⣀⠀⠈⠉⠛⠻⠃⠀⠈⠻⣦⡀⠀ ---------> |1: Veneno Acido
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⠟⢁⣴⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⢠⣾⡿⠋⠉⠛⠻⠶⣶⣿⣿⠀⠀⠀⠀⣿⣿⣿⣿⣶⣤⣀⠀⠀⠀⠀⠀⣸⡇⠀            |Is available: {weapon_status}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡿⠁⣰⣿⣿⣿⣿⠋⠀⠀⠀⠀⠀⢀⣴⡿⠿⠿⢷⣶⣤⣀⣀⠀⢹⣿⡄⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⣠⡾⠟⠁⠀           |Attack: {weapon_attack}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣰⡟⠀⣼⣿⣿⣿⠟⠁⠀⠀⠀⠀⢀⣴⣿⣿⣀⡀⠀⠀⠀⠉⠙⠛⠻⢿⣿⣇⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣇⣴⡟⠁⠀⠀⠀           |Defense: {weapon_defense}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⡿⠀⣸⣿⣿⣿⠋⠀⠀⠀⠀⠀⢠⣾⡟⠉⠉⠛⠛⠿⢷⣶⣤⣄⣀⠀⠀⢸⣿⡄⠀⠀⠈⣿⣿⣿⣿⣿⣿⣿⣿⠏⠀⠀⠀⠀⠀           |Energy consumption: {left_arm_energy_consump}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⡇⠀⣿⣿⣿⡇⠀⠀⠀⠀⠀⢠⣿⣯⣀⣀⡀⠀⠀⠀⠀⠀⠈⠉⠙⠛⢿⣿⡿⢁⣀⠀⠀⠹⣿⣿⠟⠋⣹⡿⠁⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣧⠀⢹⣿⣿⣇⠀⠀⠀⠀⠀⣿⡟⠉⠛⠛⠻⠿⠷⣶⣦⣤⣄⣀⣀⢀⣾⡟⣰⠟⠉⠳⣆⠀⠀⠀⣀⣾⠏⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡄⠀⢻⣿⣿⡄⠀⠀⠀⠀⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠛⣿⡿⢰⡏⠀⠀⠀⠈⠛⠶⠾⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀------------> |2: Boca
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⡄⠀⢻⣿⣿⡀⠀⠀⠀⢹⣿⣦⣤⣤⣤⣤⣀⣀⣀⣀⣀⡀⢀⣿⡇⣼⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             |Is available: {left_arm_status}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⣄⠀⢻⣿⣷⡀⠀⠀⠀⢿⣿⠉⠉⠉⠉⠙⠛⠛⠛⠛⠛⠻⣿⡇⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀              |Attack: {left_arm_attack}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣆⠀⢻⣿⣷⡀⠀⠀⠈⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡇⢿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀                |Defense: {left_arm_defense}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣆⠀⢻⣿⣿⡄⠀⠀⠘⣿⣦⣤⣤⣤⣤⣤⣤⣤⣤⣴⣿⡇⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀              |Energy consumption: {left_arm_energy_consump}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣦⠀⢻⣿⣿⡄⠀⠀⠘⣿⣏⠉⠉⠉⠉⠉⠀⠀⠀⢻⣿⠘⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣧⠀⠻⣿⣿⡄⠀⠀⠹⣿⡄⠀⠀⠀⠀⠀⠀⠀⢸⣿⡄⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣧⠀⠹⣿⣿⡄⠀⠀⠹⣿⣄⣤⣤⣤⣤⣤⣶⣾⣿⣧⢸⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀------------>|3: Escama
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣷⡀⠹⣿⣿⡄⠀⠀⢹⣿⡉⠉⠁⠀⠀⠀⠀⢸⣿⡌⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀              |Is available: {right_arm_status}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢷⡀⠹⣿⣿⡄⠀⠀⢻⣷⡀⠀⠀⠀⠀⠀⠀⣿⣇⢹⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀              |Attack: {right_arm_attack} 
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢷⡄⠹⣿⣿⡄⠀⠀⢿⣷⣤⣤⣴⣶⠶⠿⠿⣿⡌⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             |Defense: {right_arm_defense}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⡄⠹⣿⣿⡆⠀⠈⢿⣯⠀⠀⠀⠀⠀⠀⢿⣧⢹⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀              |Energy consumption: {right_arm_energy_consump}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡄⠹⣿⣿⣄⠀⠘⣿⣧⠀⠀⢀⣀⣀⣼⣿⡄⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣆⠹⣿⣿⡄⠀⠘⣿⣿⠟⠛⠋⠉⠉⢻⣷⠸⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀------------>|4: Corpo
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⣆⠹⣿⣿⡄⠀⠘⣿⣆⠀⠀⠀⠀⣸⣿⡇⢿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀              |Is available: {left_leg_status}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣆⠹⣿⣿⡄⠀⠸⣿⣶⡶⠿⠛⠋⢻⣿⡘⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀             |Attack: {left_leg_attack}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣆⢹⣿⣿⡀⠀⠹⣿⡄⠀⠀⠀⣀⣿⣧⢹⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀              |Defense: {left_leg_defense}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡆⢻⣿⣷⡀⠀⢹⣿⣶⠶⠟⠛⠻⣿⡄⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀              ||Energy consumption: {left_leg_energy_consump}
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡄⢻⣿⣧⠀⠀⢻⣿⠀⠀⠀⣀⣿⣧⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡴⠒⠛⠛⠛⠒⠦⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣷⠈⢿⣿⣇⠀⠈⢿⣷⡶⠟⠛⠻⣿⡄⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡴⠟⠁⢀⣀⠀⢶⣶⣶⣤⡈⠙⢦⣀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣇⠘⣿⣿⡆⠀⠘⣿⡆⠀⠀⣀⣿⣧⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⣠⠾⠋⢀⣠⣾⡿⢿⣷⡄⠻⣿⣿⣿⣷⣄⡉⠳⣄⠀⠀⠀⠀⠀⠀⠀⣿⡀⢻⣿⣿⡀⠀⢻⣿⡾⠟⠋⢹⣿⡈⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⣠⠞⠁⢀⣴⣿⠟⠉⠀⠀⠙⣿⣦⡈⠻⣿⣿⣿⣿⣦⡈⠻⣦⡀⠀⠀⠀⠀⢹⡇⠸⣿⣿⣇⠀⠘⣿⣆⣀⣤⣼⣿⡇⠻⢤⣀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⣠⠞⠁⢀⣴⡿⠋⠁⠀⠀⠀⢀⣴⠟⠻⣿⣦⡈⠻⣿⣿⣿⣿⣷⣄⠙⢦⡀⠀⠀⢸⣷⠀⣿⣿⣿⠀⠀⣿⣿⠋⠉⠀⣿⡇⢠⣄⡉⠛⢶⣄⠀⠀⠀⠀⠀
+⠀⠀⠀⢰⠋⠀⠀⠿⣿⣦⣄⡀⠀⢀⣴⡿⠁⠀⠀⢈⣿⢿⣶⣄⡙⠻⢿⣿⣿⣷⣦⡙⢷⣤⣸⣿⠀⣿⣿⣿⡇⠀⣿⣿⣤⣶⢾⣿⡇⢸⣿⣿⣷⣤⡈⠻⢦⡀⠀⠀    ---------> |5: Calda
+⠀⠀⠀⠘⣧⠀⠀⠀⠈⠙⠻⢿⣷⣿⣏⡀⠀⠀⣠⡿⠃⠀⠉⢻⣿⣷⣦⣬⣙⣛⠻⠿⠶⠈⠻⠏⢠⣿⣿⣿⡇⠀⣿⡟⠉⠀⣸⣿⠃⢸⣿⣿⣿⡿⠟⢀⡀⠹⣦⠀               |Is available: {right_leg_status}
+⠀⠀⣀⡴⠋⠀⣠⣤⣄⠀⠀⠀⠈⠉⠛⠿⣷⣶⣿⣀⡀⠀⢠⡿⠁⠀⠉⣹⡿⠛⠿⠿⣿⣿⠂⠀⣼⣿⣿⣿⠁⢠⣿⣷⡾⢿⣿⠏⠀⠉⠉⠉⢁⣀⣴⣿⣿⣆⠘⣧               |Attack: {right_leg_attack}
+⣠⠞⠋⠀⠴⣾⣿⣿⣿⣿⣦⣄⡀⠀⠀⠀⠀⠈⠙⠛⠿⢿⣿⣷⣤⣤⣤⣿⣥⣤⣴⣿⠟⠁⢀⣼⣿⣿⣿⠏⢀⣾⡟⢁⣴⣿⠏⢀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⣿              |Defense: {right_leg_defense}
+⠻⠦⣤⣀⡀⠀⠈⠉⠛⠻⠿⢿⣿⣷⣶⣤⣀⠘⠻⠶⣦⣤⣀⣉⠉⠙⠛⠛⠛⠉⠉⠀⣀⣴⣿⣿⣿⡿⠋⣠⣾⣿⣷⡿⠟⠁⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⠟⠃⣰⠏              |Energy consumption: {right_leg_energy_consump}
+⠀⠀⠀⠈⠉⠛⠓⠶⠦⣤⣄⣀⣀⡈⠉⠉⠛⠛⠷⠦⠀⠈⠉⠛⠛⠿⠿⠷⣾⣿⣿⣿⡿⠿⠿⠛⠁⠀⠀⠙⠛⠋⠁⠀⠀⠺⠿⠿⠿⠿⠟⠛⠛⣉⣁⣤⠶⠛⠁⠀              
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠛⠛⠛⠲⠶⠶⠶⠤⠤⢤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⠤⠤⠶⠶⠶⠒⠛⠛⠛⠛⠛⠛⠓⠚⠚⠛⠛⠛⠋⠉⠁⠀⠀⠀⠀⠀
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+ """
+
 robots = {
-    'art1': robot_art1,
-    'art2': robot_art2
+    'origen': robot_origen,
+    'ultron': robot_ultron,
+    'r2': robot_r2,
+    'snakepiton': robot_snakepiton,
 }
 
 
 colors = {
-    "black": '\x1b[90m',
-    "blue": '\x1b[94m',
-    "cyan": '\x1b[96m',
-    "green": '\x1b[92m',
+    "preto": '\x1b[90m',
+    "azul": '\x1b[94m',
+    "ciano": '\x1b[96m',
+    "verde": '\x1b[92m',
     "magenta": '\x1b[95m',
-    "red": '\x1b[91m',
-    "white": '\x1b[97m',
-    "yellow": '\x1b[93m',
+    "vermelho": '\x1b[91m',
+    "branco": '\x1b[97m',
+    "amarelo": '\x1b[93m',
 }
 
 
@@ -186,7 +307,7 @@ def get_part_status(self):
 
 
 def build_robot():
-    robot_name = input("Robot name: ")
+    robot_name = input("Nome do robô:")
     selected_robot = choose_robot()
     color_code = choose_color()
     robot = Robot(robot_name, color_code, selected_robot)
@@ -194,38 +315,41 @@ def build_robot():
     return robot
 
 def choose_robot():
-    print("Available robots:")
+    print("Robôs disponíveis:")
     for name in robots:
         print("- " + name.capitalize())
     while True:
-        robot_chosen = input("Choose a robot: ").lower()
+        robot_chosen = input("Escolha um Robô:").lower()
         if robot_chosen in robots:
             selected_robot = robots[robot_chosen]
             break
         else:
-            print("Invalid robot, please choose again.")
+            print("Robô invalido, escolha navamente.")
     return selected_robot
 
 def choose_color():
     available_colors = colors
-    print("Available colors:")
+    print("Cores disponíveis:")
     for key, value in available_colors.items():
         print(value, key.capitalize())
-    print(colors["white"])
+    print(colors["preto"])
     while True:
-        chosen_color = input("Choose a color: ").lower()
+        chosen_color = input("Escolha uma cor:").lower()
         if chosen_color in available_colors:
             color_code = available_colors[chosen_color]
             break
         else:
-            print("Invalid color, please choose again.")
+            print("Cor invalida, escolha novamente.")
     return color_code
 def play():
     playing = True
-    print("Welcome to the game!")
-    print("Datas for player 1:")
+    print('=-=-='*15)
+    print("         Bem-vindo(a) ao jogo! Uma intensa batalha espera por você! ")
+    print('=-=-='*15)
+    print('')
+    print(" Jogador 1, escolha com quem deseja batalhar")
     robot_one = build_robot()
-    print("Datas for player 2:")
+    print(" Jogador 2, escolha com quem deseja batalhar")
     robot_two = build_robot()
 
     #current_robot = robot_one
@@ -235,25 +359,28 @@ def play():
     while playing:
         if rount % 2 == 0:
             current_robot = robot_one
-            enemy_robot = robot_two
+            enemy_robot = robot_two      
         else:
             current_robot = robot_two
             enemy_robot = robot_one
         current_robot.print_status()
-        print("What part should I use to attack?:")
-        part_to_use = input("Choose a number part: ")
+        print("Qual parte devo usar para atacar?")
+        part_to_use = input("Escolha um número:")
         part_to_use = int(part_to_use)
 
         enemy_robot.print_status()
-        print("Which part of the enemy should we attack?")
-        part_to_attack = input("Choose a enemy number part to attack: ")
+        print("Qual parte do inimigo devemos atacar?")
+        part_to_attack = input("Escolha um número para atacar o inimigo:")
         part_to_attack = int(part_to_attack)
 
         current_robot.attack(enemy_robot, part_to_use, part_to_attack)
         rount += 1
         if not enemy_robot.is_on() or enemy_robot.is_there_available_part() == False:
-            playing = False
-            print("Congratulations, you won")
+             playing = False
+             print('')
+             print("Parabéns, você ganhou!")  
+
+
 
 
 play()
