@@ -130,19 +130,20 @@ def definir_cor():
         return definir_cor()
     else:
         return cores_disponiveis[cor_escolhida]
-
+    
 def selecionarPersonagem():
     print("\nSelecione um personagem:")
     for opcao, personagem in personagens.items():
         print(f"{opcao} - {personagem}")
-    
+
     while True:
         try:
             opcaoSelecionada = int(input("=> "))
+            if opcaoSelecionada not in personagens.keys():
+                raise ValueError
             return opcaoSelecionada
-        except (ValueError, KeyError):
+        except ValueError:
             print("\nOpção inválida! Insira uma das opções disponíveis.")
-
 
 # função que inicia o jogo
 def play():
