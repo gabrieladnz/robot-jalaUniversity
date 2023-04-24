@@ -54,10 +54,7 @@ class Robot:
     def print_robo(self):
         print(self.codigo_cor)
         # representação visual do robô
-        # personagemSelecionado = int(
-        # input("\n 1 - roboR2 \n 2 - roboUltron \n 3 - snakePiton \n =>"))
-        str_robot = selecaoExata(self.personagemSelecionado).format(
-            **self.status_partes_robo())
+        str_robot = selecionarPersonagem(self.status_partes_robo())
         self.saudacao()
         self.print_energia()
         print(str_robot)
@@ -132,27 +129,19 @@ def definir_cor():
     else:
         return cores_disponiveis[cor_escolhida]
 
+def selecionarPersonagem(status_partes_robo):
+    print("\nSelecione um personagem:")
+    for opcao, personagem in personagens.items():
+        print(f"{opcao} - {personagem}")
+    
+    while True:
+        try:
+            opcaoSelecionada = int(input("=> "))
+            personagemSelecionado = personagens[opcaoSelecionada]
+            return personagemSelecionado.format(**status_partes_robo)
+        except (ValueError, KeyError):
+            print("\nOpção inválida! Insira uma das opções disponíveis.")
 
-def selecionarPersonagem():
-    personagemSelecionado = int(
-        input("\n 1 - roboR2 \n 2 - roboUltron \n 3 - snakePiton \n =>"))
-    personagemSelecionado = selecaoExata(personagemSelecionado)
-    return personagemSelecionado
-
-
-def selecaoExata(personagemSelecionado: int):
-    if (personagemSelecionado == 1):
-        print(roboR2)
-        return 1
-    elif (personagemSelecionado == 2):
-        print(roboUltron)
-        return 2
-    elif (personagemSelecionado == 3):
-        print(snakePiton)
-        return 3
-    else:
-        print("\n Condição inválida! Insira uma das opções disponíveis.")
-        return selecionarPersonagem()
 
 # função que inicia o jogo
 def play():
@@ -160,10 +149,8 @@ def play():
     print("==========================================================")
     print("Bem-vindo(a) ao jogo! Uma intensa batalha espera por você! \n")
     print("> Jogador 1, escolha com quem deseja batalhar:")
-    selecionarPersonagem()
     robo_um = criar_robo()
     print("> Jogador 2, escolha com quem deseja batalhar:")
-    selecionarPersonagem()
     robo_dois = criar_robo()
     robo_atual = robo_um
     robo_inimigo = robo_dois
@@ -194,14 +181,15 @@ def play():
 
 
 # ==================================== Opções de batalha ============================================
-roboR2 = r"""
+personagens = {
+    1: r"""
 	
       ___       ___
      [___] /~\ [___]
      |ooo|.\_/.|ooo|
      |888||   ||888|
     /|888||   ||888|\
-  /_,|###||___||###|._\
+  /_,|   ||___||   |._\
  /~\  ~~~ /[_]\ ~~~  /~\
 (O_O) /~~[_____]~~\ (O_O)
      (  |       |  )
@@ -210,9 +198,8 @@ roboR2 = r"""
     |  |         |  |
    _<\/>_       _<\/>_
   /_====_\     /_====_\
- """
-
-roboUltron = r"""
+ """,
+  2: r"""
                         /[-])//  ___
                     __ --\ `_/~--|  / \
                   /_-/~~--~~ /~~~\\_\ /\
@@ -220,7 +207,7 @@ roboUltron = r"""
 _/~~~~~~~~|~~\,   ---|---\___/----|  \/\-\
 ~\________|__/   / // \__ |  ||  / | |   | |
          ,~-|~~~~~\--, | \|--|/~|||  |   | |
-         [3-|____---~~ _--'==;/ _,   |   |_|
+          [-|____---~~ _--'==;/ _,   |   |_|
                      /   /\__|_/  \  \__/--/
                     /---/_\  -___/ |  /,--|
                     /  /\/~--|   | |  \///
@@ -235,9 +222,8 @@ _/~~~~~~~~|~~\,   ---|---\___/----|  \/\-\
                      |  /            /   |/\/
                       ~~             /  /
                                     |__/
- """
-
-snakePiton = r"""
+ """,
+3: r"""
  ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⠶⠟⠛⠛⠻⠶⠶⣶⣤⣤⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⡾⠋⣡⣴⣾⣿⣿⣿⣶⣶⣦⣤⣉⣉⠛⠛⠷⢶⣤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⠟⢉⣤⣾⣿⣿⣿⡿⠋⠁⠀⠀⠈⠉⠙⠛⠿⢷⣶⣤⣄⣉⠙⠛⠷⣦⣄⡀⠀⠀⠀⠀⠀⠀⠀
@@ -268,7 +254,7 @@ snakePiton = r"""
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣆⠹⣿⣿⡄⠀⠸⣿⣶⡶⠿⠛⠋⢻⣿⡘⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣆⢹⣿⣿⡀⠀⠹⣿⡄⠀⠀⠀⣀⣿⣧⢹⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡆⢻⣿⣷⡀⠀⢹⣿⣶⠶⠟⠛⠻⣿⡄⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡄⢻⣿⣧⠀⠀⢻⣿⠀⠀⠀⣀⣿⣧⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ ⢿⡄⢻⣿⣧⠀⠀⢻⣿⠀⠀⠀⣀⣿⣧⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡴⠒⠛⠛⠛⠒⠦⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣷⠈⢿⣿⣇⠀⠈⢿⣷⡶⠟⠛⠻⣿⡄⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡴⠟⠁⢀⣀⠀⢶⣶⣶⣤⡈⠙⢦⣀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣇⠘⣿⣿⡆⠀⠘⣿⡆⠀⠀⣀⣿⣧⢸⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⣠⠾⠋⢀⣠⣾⡿⢿⣷⡄⠻⣿⣿⣿⣷⣄⡉⠳⣄⠀⠀⠀⠀⠀⠀⠀⣿⡀⢻⣿⣿⡀⠀⢻⣿⡾⠟⠋⢹⣿⡈⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -282,5 +268,5 @@ snakePiton = r"""
 ⠀⠀⠀⠈⠉⠛⠓⠶⠦⣤⣄⣀⣀⡈⠉⠉⠛⠛⠷⠦⠀⠈⠉⠛⠛⠿⠿⠷⣾⣿⣿⣿⡿⠿⠿⠛⠁⠀⠀⠙⠛⠋⠁⠀⠀⠺⠿⠿⠿⠿⠟⠛⠛⣉⣁⣤⠶⠛⠁⠀
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠛⠛⠛⠲⠶⠶⠶⠤⠤⢤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⠤⠤⠶⠶⠶⠒⠛⠛⠛⠛⠛⠛⠓⠚⠚⠛⠛⠛⠋⠉⠁⠀⠀⠀⠀⠀
  """
-
+}
 play()
