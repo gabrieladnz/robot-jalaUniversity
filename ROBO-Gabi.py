@@ -31,10 +31,11 @@ class Part():
 
 class Robot:
     # a classe Robot define as características básicas do robô, interagindo com a classe Part que contém as partes do robo
-    def __init__(self, nome, codigo_cor):
+    def __init__(self, nome, codigo_cor, roboSelecionado):
         self.nome = nome
         self.codigo_cor = codigo_cor
         self.energia = 100
+        self.roboSelecionado = roboSelecionado
         # chama a classe Part e seus objetos, representando as partes do robô
         self.parts = [
             Part("Cabeça", nivelAtaque=10, nivelDefesa=10, energiaConsumida=5),
@@ -54,7 +55,7 @@ class Robot:
     def print_robo(self):
         print(self.codigo_cor)
         # representação visual do robô
-        str_robot = selecionarPersonagem(self.status_partes_robo())
+        str_robot = personagens[self.roboSelecionado].format(**self.status_partes_robo())
         self.saudacao()
         self.print_energia()
         print(str_robot)
@@ -109,7 +110,8 @@ cores = {
 def criar_robo():
     robot_nome = input("\n > Nome do robô: ")
     codigo_cor = definir_cor()
-    robot = Robot(robot_nome, codigo_cor)
+    roboSelecionado = selecionarPersonagem()
+    robot = Robot(robot_nome, codigo_cor, roboSelecionado)
     robot.print_robo()
     return robot
 
@@ -129,7 +131,7 @@ def definir_cor():
     else:
         return cores_disponiveis[cor_escolhida]
 
-def selecionarPersonagem(status_partes_robo):
+def selecionarPersonagem():
     print("\nSelecione um personagem:")
     for opcao, personagem in personagens.items():
         print(f"{opcao} - {personagem}")
@@ -137,8 +139,7 @@ def selecionarPersonagem(status_partes_robo):
     while True:
         try:
             opcaoSelecionada = int(input("=> "))
-            personagemSelecionado = personagens[opcaoSelecionada]
-            return personagemSelecionado.format(**status_partes_robo)
+            return opcaoSelecionada
         except (ValueError, KeyError):
             print("\nOpção inválida! Insira uma das opções disponíveis.")
 
