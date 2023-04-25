@@ -216,7 +216,7 @@ def play():
         rodada += 1
         if not robo_inimigo.robo_ligado() or robo_inimigo.parte_robo_disponivel() == False:
             playing = False
-            print(f"Parabéns, {robo_atual.nome} ganhou!\n{robo_atual}")
+            print(f"Parabéns, {robo_atual.nome} ganhou!")
 
 
 # ==================================== Opções de batalha ============================================
